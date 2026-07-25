@@ -1,0 +1,67 @@
+﻿@model IEnumerable<LongTermCareMatching.Models.User>
+
+@{
+    ViewData["Title"] = "會員帳號管理";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>👥 管理員後台 - 會員總覽與權限管理</h2>
+        <a asp-action="AuditList" class="btn btn-outline-primary">返回待審核清單</a>
+    </div>
+
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>姓名</th>
+                <th>Email</th>
+                <th>身分</th>
+                <th>區域</th>
+                <th class="text-center">帳號狀態</th>
+                <th class="text-center">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr class="@(user.IsBanned ? "table-danger" : "")">
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <span class="badge @(user.Role == "Caregiver" ? "bg-info" : "bg-warning") text-dark">
+                            @(user.Role == "Caregiver" ? "照服員" : "家屬")
+                        </span>
+                    </td>
+                    <td>@user.Area</td>
+                    <td class="text-center">
+                        @if (user.IsBanned)
+                        {
+                            <span class="badge bg-danger">已停權</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">正常使用中</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <form asp-action="ToggleBan" method="post" style="display:inline;">
+                            <input type="hidden" name="userId" value="@user.UserId" />
+                            @if (user.IsBanned)
+                            {
+                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                    🔓 解除停權
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('確定要停權該使用者嗎？');">
+                                    🚫 帳號停權
+                                </button>
+                            }
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

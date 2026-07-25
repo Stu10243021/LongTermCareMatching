@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "會員登入";
+}
+
+<div class="container mt-5" style="max-width: 450px;">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center">
+            <h3>長照媒合系統 - 登入</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Login" method="post">
+                <div class="mb-3">
+                    <label class="form-label">電子郵件 (Email)</label>
+                    <input type="email" name="Email" class="form-control" placeholder="請輸入 Email" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">密碼</label>
+                    <input type="password" name="Password" class="form-control" placeholder="請輸入密碼" required />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">登入系統</button>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Register" class="text-decoration-none">還沒有帳號？點此註冊</a>
+        </div>
+    </div>
+</div>

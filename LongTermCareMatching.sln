@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LongTermCareMatching", "LongTermCareMatching.csproj", "{9FF9AC00-204A-449F-9772-B6C69AA3F312}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9FF9AC00-204A-449F-9772-B6C69AA3F312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FF9AC00-204A-449F-9772-B6C69AA3F312}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FF9AC00-204A-449F-9772-B6C69AA3F312}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FF9AC00-204A-449F-9772-B6C69AA3F312}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BACAE453-EF2D-4448-9B74-DE67E1E24CB7}
+	EndGlobalSection
+EndGlobal

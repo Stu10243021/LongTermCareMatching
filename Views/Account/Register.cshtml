@@ -1,0 +1,84 @@
+﻿@model LongTermCareMatching.Models.User
+
+@{
+    ViewData["Title"] = "會員註冊";
+}
+
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center">
+            <h3>長照媒合系統 - 會員註冊</h3>
+        </div>
+        <div class="card-body">
+            <!-- 上傳檔案 -->
+            <form asp-action="Register" method="post" enctype="multipart/form-data">
+
+                <!-- 姓名 -->
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">姓名</label>
+                    <input asp-for="Name" class="form-control" placeholder="請輸入姓名" required />
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">電子郵件</label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="example@email.com" required />
+                </div>
+
+                <!-- 密碼 -->
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">密碼</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="請輸入密碼" required />
+                </div>
+
+                <!-- 居住/服務區域 -->
+                <div class="mb-3">
+                    <label asp-for="Area" class="form-label">居住 / 服務區域</label>
+                    <select asp-for="Area" class="form-select" required>
+                        <option value="">-- 請選擇區域 --</option>
+                        <option value="桃園市龜山區">桃園市龜山區</option>
+                        <option value="桃園市龍潭區">桃園市龍潭區</option>
+                        <option value="桃園市觀音區">桃園市觀音區</option>
+                        <option value="桃園市大園區">桃園市大園區</option>
+                        <option value="桃園市蘆竹區">桃園市蘆竹區</option>
+                    </select>
+                </div>
+
+                <!-- 身分選擇 -->
+                <div class="mb-3">
+                    <label asp-for="Role" class="form-label">註冊身分</label>
+                    <select id="roleSelect" asp-for="Role" class="form-select" onchange="toggleCaregiverFields()" required>
+                        <option value="Family">家屬 (發布照顧需求)</option>
+                        <option value="Caregiver">照服員 (提供照顧服務)</option>
+                    </select>
+                </div>
+
+                <!-- 🎯 照服員專屬：證照上傳區塊 (預設隱藏) -->
+                <div id="caregiverSection" class="mb-3 p-3 bg-light rounded border" style="display: none;">
+                    <label class="form-label text-danger fw-bold">上傳長照服務員證照 / 資格證明</label>
+                    <input type="file" name="certificateFile" class="form-control" accept="image/*,.pdf" />
+                    <small class="text-muted">（上傳後需等待管理員審核通過方可接案）</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-3">完成註冊</button>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Login" class="text-decoration-none">已有帳號？點此登入</a>
+        </div>
+    </div>
+</div>
+
+<!-- JS：切換選單時動態顯示/隱藏證照上傳框 -->
+<script>
+    function toggleCaregiverFields() {
+        var role = document.getElementById("roleSelect").value;
+        var caregiverSection = document.getElementById("caregiverSection");
+
+        if (role === "Caregiver") {
+            caregiverSection.style.display = "block";
+        } else {
+            caregiverSection.style.display = "none";
+        }
+    }
+</script>

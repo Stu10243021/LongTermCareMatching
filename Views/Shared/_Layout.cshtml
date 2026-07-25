@@ -1,0 +1,98 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // 🔑 讀取目前登入者的角色與姓名
+    var userRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole");
+    var userName = HttpContextAccessor.HttpContext?.Session.GetString("UserName");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 長照服務媒合平台LongTermCareMatching</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/長照服務媒合平台LongTermCareMatching.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Account" asp-action="Login">
+                    🏥 長照服務媒合平台
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+
+                        <!-- 🛡️ 只有「Admin 管理員」登入時，才會顯示這兩個選單 -->
+                        @if (userRole == "Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-controller="Admin" asp-action="AuditList">
+                                    📋 待審核清單
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-controller="Admin" asp-action="UserList">
+                                    👥 會員總覽與停權
+                                </a>
+                            </li>
+                        }
+
+                        <!-- 🎯 未來會在這裡加上家屬 (Family) 與照服員 (Caregiver) 的頁籤 -->
+
+                    </ul>
+
+                    <!-- 右側：使用者資訊與登出區塊 -->
+                    <ul class="navbar-nav">
+                        @if (!string.IsNullOrEmpty(userName))
+                        {
+                            <!-- 已登入：顯示名字與角色，以及登出按鈕 -->
+                            <li class="nav-item me-3 d-flex align-items-center">
+                                <span class="badge bg-primary">👤 @userName (@userRole)</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-danger btn-sm" asp-controller="Account" asp-action="Logout">
+                                    🚪 登出
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <!-- 未登入：顯示登入/註冊按鈕 -->
+                            <li class="nav-item">
+                                <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Login">
+                                    🔐 登入 / 註冊
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - 長照服務媒合平台LongTermCareMatching - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

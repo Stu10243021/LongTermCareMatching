@@ -1,0 +1,23 @@
+﻿@model LongTermCareMatching.Models.User
+
+@{
+    ViewData["Title"] = "使用者詳細資料";
+}
+
+<h1>使用者詳細資料</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">姓名</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Email)</dd>
+        <dt class="col-sm-2">角色/身分</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Role)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.UserId" class="btn btn-warning">編輯</a>
+    <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+</div>

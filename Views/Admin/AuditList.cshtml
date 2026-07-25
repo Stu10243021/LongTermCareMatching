@@ -1,0 +1,60 @@
+﻿@model IEnumerable<LongTermCareMatching.Models.User>
+
+@{
+    ViewData["Title"] = "照服員資格審核後台";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">🛡️ 管理員後台 - 待審核照服員清單</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-success text-center p-4">
+            🎉 目前沒有等待審核的照服員！
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>姓名</th>
+                    <th>Email</th>
+                    <th>服務區域</th>
+                    <th class="text-center">證照預覽</th>
+                    <th class="text-center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>@user.Area</td>
+                        <td class="text-center">
+                            @if (!string.IsNullOrEmpty(user.CertificateUrl))
+                            {
+                                <a href="@user.CertificateUrl" target="_blank">
+                                    <img src="@user.CertificateUrl" alt="證照" style="max-height: 80px;" class="img-thumbnail" />
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">未上傳</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <form asp-action="Approve" method="post">
+                                <input type="hidden" name="userId" value="@user.UserId" />
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    ✓ 審核通過
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
