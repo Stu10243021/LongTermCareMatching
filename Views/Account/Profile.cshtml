@@ -1,0 +1,95 @@
+﻿@model LongTermCareMatching.Models.User
+
+@{
+    ViewData["Title"] = "個人資料與履歷管理";
+}
+
+<div class="container mt-4 mb-5" style="max-width: 680px;">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h4 class="mb-0 fw-bold">
+                👤 個人資料與履歷管理
+                <span class="badge bg-light text-primary fs-6 ms-2">
+                    @(Model.Role == "Caregiver" ? "照服員" : Model.Role == "Family" ? "家屬" : "管理員")
+                </span>
+            </h4>
+        </div>
+
+        <div class="card-body p-4">
+            <form asp-action="Profile" method="post">
+
+                <input type="hidden" asp-for="UserId" />
+
+                <h5 class="fw-bold text-secondary mb-3">📌 基本聯絡資訊</h5>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">姓名</label>
+                    <input asp-for="Name" class="form-control" required placeholder="請輸入姓名" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">電子郵件 (帳號，不可修改)</label>
+                    <input asp-for="Email" class="form-control bg-light" readonly disabled />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">聯絡電話</label>
+                        <input asp-for="Phone" class="form-control" placeholder="例：0912-345-678" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">主要服務 / 居住區域</label>
+                        <input asp-for="Area" class="form-control" placeholder="例：桃園市中壢區" />
+                    </div>
+                </div>
+
+                @if (Model.Role == "Caregiver")
+                {
+                    <hr class="my-4" />
+                    <h5 class="fw-bold text-primary mb-3">📜 照服員專業履歷與背景設定</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">服務年資與經歷</label>
+                        <input asp-for="Experience" class="form-control" placeholder="例如：醫院看護 3 年、居家照顧服務員 2 年" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">照顧服務員證照字號</label>
+                        <input asp-for="LicenseNumber" class="form-control" placeholder="請輸入證照號碼或備查字號" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">自我介紹與服務理念</label>
+                        <textarea asp-for="Bio" class="form-control" rows="4" placeholder="向家屬介紹您的照顧經驗、個人特質與照顧理念..."></textarea>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.CertificateUrl))
+                    {
+                        <div class="mb-3 p-3 bg-light rounded border">
+                            <label class="form-label fw-bold text-success">✅ 已上傳之證照檔案：</label>
+                            <div>
+                                <a href="@Model.CertificateUrl" target="_blank" class="btn btn-sm btn-outline-success">查看已上傳證照檔</a>
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-success btn-lg fw-bold">💾 儲存修改</button>
+                    <a asp-controller="Case" asp-action="Index" class="btn btn-outline-secondary">返回首頁 / 接案大廳</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

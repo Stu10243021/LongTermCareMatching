@@ -1,0 +1,43 @@
+﻿@model LongTermCareMatching.Models.Case
+
+@{
+    ViewData["Title"] = "金額確認與付款預授權";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow border-0">
+        <div class="card-header bg-warning text-dark text-center">
+            <h4 class="mb-0">💳 需求試算確認與付款預授權</h4>
+        </div>
+        <div class="card-body text-center p-4">
+            <h5 class="card-title fw-bold">您的照顧需求試算結果如下：</h5>
+
+            <div class="my-4 p-3 bg-light rounded border text-start">
+                <p class="mb-2 fs-5">📌 <strong>需求標題：</strong>@Model.Title</p>
+                <p class="mb-2 text-muted">🏷️ <strong>服務類別：</strong>@Model.ServiceType</p>
+                <p class="mb-2 text-muted">📍 <strong>服務區域：</strong>桃園市 @Model.Location</p>
+
+                @if (Model.ServiceType == "陪診")
+                {
+                    <p class="mb-2 text-info">🏥 <strong>目標醫院：</strong>@Model.Hospital (@Model.Department)</p>
+                }
+
+                <hr />
+                <div class="text-center">
+                    <p class="mb-1 text-secondary">預估服務總金額</p>
+                    <h2 class="text-danger fw-bold my-2">$@Model.EstimatedBudget 元</h2>
+                </div>
+            </div>
+
+            <p class="text-muted small">點擊下方按鈕將進行信用卡預授權（暫不扣款，媒合成功後才結算）。</p>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                <a asp-action="Create" class="btn btn-outline-secondary btn-lg px-4">❌ 修改需求</a>
+                <form asp-action="AuthorizePayment" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-success btn-lg px-4 fw-bold">✅ 接受金額並預授權</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

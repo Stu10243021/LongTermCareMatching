@@ -1,0 +1,181 @@
+﻿@model LongTermCareMatching.Models.Case
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "案件詳情與媒合";
+    var userRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole");
+    var userIdStr = HttpContextAccessor.HttpContext?.Session.GetString("UserId");
+    int currentUserId = string.IsNullOrEmpty(userIdStr) ? 0 : int.Parse(userIdStr);
+
+    var comments = ViewBag.Comments as List<LongTermCareMatching.Models.CaseComment> ?? new List<LongTermCareMatching.Models.CaseComment>();
+    var applications = ViewBag.Applications as List<LongTermCareMatching.Models.CaseApplication> ?? new List<LongTermCareMatching.Models.CaseApplication>();
+    bool hasApplied = ViewBag.HasApplied ?? false;
+}
+
+<div class="container mt-4 mb-5">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0 fw-bold">📌 @Model.Title</h3>
+            <span class="badge bg-light text-primary fs-6">
+                @(Model.Status == "Open" ? "🟢 開放應徵中" : Model.Status == "InProgress" ? "🟡 洽談 / 服務中" : "⚫ 已結案")
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <p><strong>服務項目：</strong> <span class="badge bg-info text-dark">@Model.ServiceType</span></p>
+                    <p><strong>地點：</strong> 桃園市 @Model.Location</p>
+                    <p><strong>預估預算：</strong> <span class="text-danger fw-bold fs-5">$@Model.EstimatedBudget 元</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>需求說明：</strong> @Model.Description</p>
+                    @if (Model.ServiceType == "陪診")
+                    {
+                        <p><strong>前往醫院/科別：</strong> @Model.Hospital / @Model.Department</p>
+                    }
+                    <p class="text-muted"><small>發布時間：@Model.CreatedAt.ToString("yyyy/MM/dd HH:mm")</small></p>
+                </div>
+            </div>
+
+            <hr />
+
+            @if (userRole == "Caregiver" && Model.Status == "Open")
+            {
+                <div class="text-end">
+                    @if (hasApplied)
+                    {
+                        <button class="btn btn-secondary btn-lg" disabled>⏳ 已送出應徵 (等待家屬審核中)</button>
+                    }
+                    else
+                    {
+                        <form asp-action="Apply" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm">🙋‍♂️ 我要應徵此案件</button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (userRole == "Family" && Model.FamilyUserId == currentUserId)
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-warning text-dark fw-bold">
+                🤝 應徵照服員名單與媒合確認 (共有 @applications.Count 位應徵)
+            </div>
+            <div class="card-body p-0">
+                @if (!applications.Any())
+                {
+                    <p class="text-muted p-3 mb-0">目前尚無照服員應徵，請耐心等候。</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>照服員姓名</th>
+                                    <th>應徵時間</th>
+                                    <th>目前狀態</th>
+                                    <th class="text-center">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var app in applications)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">👤 @app.CaregiverName</td>
+                                        <td>@app.AppliedAt.ToString("yyyy/MM/dd HH:mm")</td>
+                                        <td>
+                                            @if (app.Status == "Pending")
+                                            {
+                                                <span class="badge bg-secondary">⏳ 待審核</span>
+                                            }
+                                            else if (app.Status == "Accepted")
+                                            {
+                                                <span class="badge bg-success">🎉 已錄取媒合</span>
+                                            }
+                                            else if (app.Status == "Rejected")
+                                            {
+                                                <span class="badge bg-light text-muted">未錄取</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            @if (Model.Status == "Open" && app.Status == "Pending")
+                                            {
+                                                <form asp-action="AcceptCaregiver" method="post" class="d-inline">
+                                                    <input type="hidden" name="caseId" value="@Model.Id" />
+                                                    <input type="hidden" name="applicationId" value="@app.Id" />
+                                                    <button type="submit" class="btn btn-success btn-sm fw-bold" onsubmit="return confirm('確定要選擇這位照服員進行媒合嗎？');">
+                                                        ✅ 確認錄取媒合
+                                                    </button>
+                                                </form>
+                                            }
+                                            else if (app.Status == "Accepted")
+                                            {
+                                                <span class="text-success fw-bold">已確認媒合</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- 線上對話留言區  -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light fw-bold">💬 案件線上洽談與問答</div>
+        <div class="card-body">
+            @if (!comments.Any())
+            {
+                <p class="text-muted">尚無任何留言。</p>
+            }
+            else
+            {
+                <div class="mb-4">
+                    @foreach (var c in comments)
+                    {
+                        <div class="mb-3 p-3 rounded @(c.UserRole == "Family" ? "bg-light border-start border-primary border-4" : "bg-light border-start border-success border-4")">
+                            <div class="d-flex justify-content-between">
+                                <strong>@c.UserName (@(c.UserRole == "Family" ? "家屬" : "照服員"))</strong>
+                                <small class="text-muted">@c.CreatedAt.ToString("yyyy/MM/dd HH:mm")</small>
+                            </div>
+                            <p class="mb-0 mt-2">@c.Content</p>
+                        </div>
+                    }
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(userRole))
+            {
+                <form asp-action="AddComment" method="post">
+                    <input type="hidden" name="caseId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <textarea name="content" class="form-control" rows="3" placeholder="輸入你想詢問或說明的內容..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary fw-bold">送出留言</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

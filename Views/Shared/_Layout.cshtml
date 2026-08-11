@@ -2,7 +2,6 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    // 🔑 讀取目前登入者的角色與姓名
     var userRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole");
     var userName = HttpContextAccessor.HttpContext?.Session.GetString("UserName");
 }
@@ -21,7 +20,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Account" asp-action="Login">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Case" asp-action="Index">
                     🏥 長照服務媒合平台
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -31,32 +30,72 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
 
-                        <!-- 🛡️ 只有「Admin 管理員」登入時，才會顯示這兩個選單 -->
-                        @if (userRole == "Admin")
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-bold" asp-controller="Case" asp-action="Index">
+                                📢 需求接案大廳
+                            </a>
+                        </li>
+
+                        @if (userRole == "Family")
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark fw-bold" asp-controller="Admin" asp-action="AuditList">
-                                    📋 待審核清單
+                                <a class="nav-link text-success fw-bold" asp-controller="Case" asp-action="Create">
+                                    ➕ 發布照顧需求
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark fw-bold" asp-controller="Admin" asp-action="UserList">
-                                    👥 會員總覽與停權
+                                <a class="nav-link text-dark fw-bold" asp-controller="Case" asp-action="MyCases">
+                                    📋 我的需求案件
                                 </a>
                             </li>
                         }
 
-                        <!-- 🎯 未來會在這裡加上家屬 (Family) 與照服員 (Caregiver) 的頁籤 -->
+                        @if (userRole == "Caregiver")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" asp-controller="Case" asp-action="MyJobs">
+                                    💼 我的接案紀錄
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrEmpty(userName))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" asp-controller="Account" asp-action="Profile">
+                                    👤 個人履歷設定
+                                </a>
+                            </li>
+                        }
+
+                        @if (userRole == "Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-danger fw-bold" asp-controller="Admin" asp-action="AuditList">
+                                    📋 待審核清單
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger fw-bold" asp-controller="Admin" asp-action="UserList">
+                                    👥 會員總覽與停權
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-warning fw-bold" asp-controller="Admin" asp-action="Announcements">
+                                    📢 平台公告管理
+                                </a>
+                            </li>
+                        }
 
                     </ul>
 
-                    <!-- 右側：使用者資訊與登出區塊 -->
                     <ul class="navbar-nav">
                         @if (!string.IsNullOrEmpty(userName))
                         {
-                            <!-- 已登入：顯示名字與角色，以及登出按鈕 -->
                             <li class="nav-item me-3 d-flex align-items-center">
-                                <span class="badge bg-primary">👤 @userName (@userRole)</span>
+                                <a asp-controller="Account" asp-action="Profile" class="text-decoration-none">
+                                    <span class="badge bg-primary fs-6">👤 @userName (@userRole)</span>
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="btn btn-outline-danger btn-sm" asp-controller="Account" asp-action="Logout">
@@ -66,7 +105,6 @@
                         }
                         else
                         {
-                            <!-- 未登入：顯示登入/註冊按鈕 -->
                             <li class="nav-item">
                                 <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Login">
                                     🔐 登入 / 註冊

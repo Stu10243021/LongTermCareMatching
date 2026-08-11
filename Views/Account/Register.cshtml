@@ -13,38 +13,41 @@
             <!-- 上傳檔案 -->
             <form asp-action="Register" method="post" enctype="multipart/form-data">
 
-                <!-- 姓名 -->
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label">姓名</label>
                     <input asp-for="Name" class="form-control" placeholder="請輸入姓名" required />
                 </div>
 
-                <!-- Email -->
                 <div class="mb-3">
                     <label asp-for="Email" class="form-label">電子郵件</label>
                     <input asp-for="Email" type="email" class="form-control" placeholder="example@email.com" required />
                 </div>
 
-                <!-- 密碼 -->
                 <div class="mb-3">
                     <label asp-for="Password" class="form-label">密碼</label>
                     <input asp-for="Password" type="password" class="form-control" placeholder="請輸入密碼" required />
                 </div>
 
-                <!-- 居住/服務區域 -->
                 <div class="mb-3">
-                    <label asp-for="Area" class="form-label">居住 / 服務區域</label>
+                    <label asp-for="Area" class="form-label">居住 / 服務區域 (桃園市)</label>
                     <select asp-for="Area" class="form-select" required>
-                        <option value="">-- 請選擇區域 --</option>
-                        <option value="桃園市龜山區">桃園市龜山區</option>
-                        <option value="桃園市龍潭區">桃園市龍潭區</option>
-                        <option value="桃園市觀音區">桃園市觀音區</option>
-                        <option value="桃園市大園區">桃園市大園區</option>
-                        <option value="桃園市蘆竹區">桃園市蘆竹區</option>
+                        <option value="">-- 請選擇桃園服務區域 --</option>
+                        <option value="桃園區">桃園區</option>
+                        <option value="中壢區">中壢區</option>
+                        <option value="平鎮區">平鎮區</option>
+                        <option value="八德區">八德區</option>
+                        <option value="楊梅區">楊梅區</option>
+                        <option value="蘆竹區">蘆竹區</option>
+                        <option value="龜山區">龜山區</option>
+                        <option value="龍潭區">龍潭區</option>
+                        <option value="大溪區">大溪區</option>
+                        <option value="大園區">大園區</option>
+                        <option value="觀音區">觀音區</option>
+                        <option value="新屋區">新屋區</option>
+                        <option value="復興區">復興區</option>
                     </select>
                 </div>
 
-                <!-- 身分選擇 -->
                 <div class="mb-3">
                     <label asp-for="Role" class="form-label">註冊身分</label>
                     <select id="roleSelect" asp-for="Role" class="form-select" onchange="toggleCaregiverFields()" required>
@@ -53,7 +56,7 @@
                     </select>
                 </div>
 
-                <!-- 🎯 照服員專屬：證照上傳區塊 (預設隱藏) -->
+                <!-- 照服員專屬：證照上傳區塊 -->
                 <div id="caregiverSection" class="mb-3 p-3 bg-light rounded border" style="display: none;">
                     <label class="form-label text-danger fw-bold">上傳長照服務員證照 / 資格證明</label>
                     <input type="file" name="certificateFile" class="form-control" accept="image/*,.pdf" />
@@ -69,7 +72,6 @@
     </div>
 </div>
 
-<!-- JS：切換選單時動態顯示/隱藏證照上傳框 -->
 <script>
     function toggleCaregiverFields() {
         var role = document.getElementById("roleSelect").value;

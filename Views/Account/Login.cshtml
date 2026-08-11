@@ -8,6 +8,16 @@
             <h3>長照媒合系統 - 登入</h3>
         </div>
         <div class="card-body">
+
+            <!--錯誤訊息提示框-->
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show my-3" role="alert">
+                    <strong>⚠️ 登入失敗：</strong> @ViewBag.Error
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
             <form asp-action="Login" method="post">
                 <div class="mb-3">
                     <label class="form-label">電子郵件 (Email)</label>

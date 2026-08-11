@@ -1,0 +1,121 @@
+﻿@model LongTermCareMatching.Models.Case
+
+@{
+    ViewData["Title"] = "建立照顧需求";
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">📋 建立照顧需求</h4>
+        </div>
+        <div class="card-body">
+
+            <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
+
+            <form asp-action="Create" method="post" id="caseForm">
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-bold">需求標題</label>
+                    <input asp-for="Title" class="form-control" placeholder="例：林爺爺台大醫院陪診 / 周奶奶陪伴照顧" required />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ServiceType" class="form-label fw-bold">選擇服務類別</label>
+                    <select id="serviceTypeSelect" asp-for="ServiceType" class="form-select" onchange="toggleServiceFields()" required>
+                        <option value="">-- 請選擇類別 --</option>
+                        <option value="陪診">🏥 陪診服務</option>
+                        <option value="居家照顧">🏠 居家照顧</option>
+                        <option value="日常陪伴">☕ 日常陪伴</option>
+                    </select>
+                </div>
+
+                <div id="escortSection" class="p-3 mb-3 bg-light rounded border border-info" style="display: none;">
+                    <h6 class="text-info fw-bold mb-3">🏥 陪診詳細資訊</h6>
+                    <div class="mb-3">
+                        <label asp-for="Hospital" class="form-label">目標醫院</label>
+                        <input asp-for="Hospital" class="form-control" placeholder="例：林口長庚醫院 / 桃園醫院" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Department" class="form-label">看診科別</label>
+                        <input asp-for="Department" class="form-control" placeholder="例：心臟內科 / 眼科" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">服務內容描述</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="請填寫具體照顧注意事項或特別需求"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Location" class="form-label fw-bold">服務地區 (桃園市)</label>
+                        <select asp-for="Location" class="form-select" required>
+                            <option value="">-- 請選擇區域 --</option>
+                            <option value="桃園區">桃園區</option>
+                            <option value="中壢區">中壢區</option>
+                            <option value="平鎮區">平鎮區</option>
+                            <option value="八德區">八德區</option>
+                            <option value="楊梅區">楊梅區</option>
+                            <option value="蘆竹區">蘆竹區</option>
+                            <option value="龜山區">龜山區</option>
+                            <option value="龍潭區">龍潭區</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ServiceTime" class="form-label fw-bold">預計服務時數 (小時)</label>
+                        <input type="text" asp-for="ServiceTime" id="hoursInput" class="form-control" value="3" oninput="calculateBudget()" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Address" class="form-label">詳細地址</label>
+                    <input asp-for="Address" class="form-control" placeholder="例：中正路 100 號" />
+                </div>
+
+                <hr />
+
+                <div class="alert alert-warning d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0 fw-bold">💰 系統預估金額</h5>
+                        <small class="text-muted">（基礎時薪 $350 / 小時 試算）</small>
+                    </div>
+                    <div>
+                        <span class="fs-3 fw-bold text-danger" id="displayBudget">$1050</span>
+                        <input type="hidden" asp-for="EstimatedBudget" id="hiddenBudget" value="1050" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold">下一步：前往金額確認與預授權 ➔</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleServiceFields() {
+        var type = document.getElementById("serviceTypeSelect").value;
+        var escortSection = document.getElementById("escortSection");
+
+        if (type === "陪診") {
+            escortSection.style.display = "block";
+        } else {
+            escortSection.style.display = "none";
+        }
+        calculateBudget();
+    }
+
+    function calculateBudget() {
+        var type = document.getElementById("serviceTypeSelect").value;
+        var hours = parseFloat(document.getElementById("hoursInput").value) || 1;
+        var rate = 350;
+
+        if (type === "陪診") {
+            rate = 400;
+        }
+
+        var total = hours * rate;
+        document.getElementById("displayBudget").innerText = "$" + total;
+        document.getElementById("hiddenBudget").value = total;
+    }
+</script>

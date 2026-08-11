@@ -1,0 +1,104 @@
+﻿@model List<LongTermCareMatching.Models.Announcement>
+
+@{
+    ViewData["Title"] = "平台公告管理";
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="fw-bold mb-4">📢 平台公告管理</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white fw-bold">＋ 發布新公告</div>
+        <div class="card-body">
+            <form asp-action="CreateAnnouncement" method="post">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">公告標題</label>
+                        <input type="text" name="Title" class="form-control" placeholder="例：系統定期維護通知" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">公告類型</label>
+                        <select name="Category" class="form-select">
+                            <option value="System">系統公告</option>
+                            <option value="Event">活動消息</option>
+                            <option value="Maintenance">維護通知</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold">公告內容</label>
+                        <textarea name="Content" class="form-control" rows="3" placeholder="請輸入詳細公告內容..." required></textarea>
+                    </div>
+                    <div class="col-12 d-flex align-items-center justify-content-between">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="IsPinned" value="true" id="isPinnedCheck">
+                            <label class="form-check-label fw-bold" for="isPinnedCheck">
+                                📌 置頂公告 (顯示於最前方)
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary fw-bold px-4">發布公告</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light fw-bold">📋 已發布公告總覽</div>
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <p class="text-muted p-3 mb-0">目前尚無任何公告。</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>置頂</th>
+                                <th>類型</th>
+                                <th>標題</th>
+                                <th>內容簡述</th>
+                                <th>發布時間</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (item.IsPinned)
+                                        {
+                                            <span class="badge bg-danger">📌 置頂</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info text-dark">@item.Category</span>
+                                    </td>
+                                    <td class="fw-bold">@item.Title</td>
+                                    <td class="text-muted text-truncate" style="max-width: 250px;">@item.Content</td>
+                                    <td>@item.CreatedAt.ToString("yyyy/MM/dd HH:mm")</td>
+                                    <td class="text-center">
+                                        <form asp-action="DeleteAnnouncement" method="post" class="d-inline" onsubmit="return confirm('確定要刪除此公告嗎？');">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">刪除</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

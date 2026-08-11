@@ -1,0 +1,82 @@
+﻿@model IEnumerable<LongTermCareMatching.Models.Case>
+
+@{
+    ViewData["Title"] = "我的接案紀錄";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">💼 我的接案紀錄與溝通</h2>
+        <a asp-action="Index" class="btn btn-outline-primary fw-bold">📢 前往需求大廳接案</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm border-0 py-5 text-center">
+            <div class="card-body">
+                <p class="text-muted fs-5 mb-3">您目前尚未接下任何案件！</p>
+                <a asp-action="Index" class="btn btn-success fw-bold">立即去大廳看看有哪些新需求</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>案件標題</th>
+                            <th>服務項目</th>
+                            <th>服務地點</th>
+                            <th>預估報酬</th>
+                            <th>目前狀態</th>
+                            <th class="text-center">操作與溝通</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.Title</td>
+                                <td><span class="badge bg-info text-dark">@item.ServiceType</span></td>
+                                <td>桃園市 @item.Location</td>
+                                <td class="text-danger fw-bold">$@item.EstimatedBudget 元</td>
+                                <td>
+                                    @if (item.Status == "InProgress")
+                                    {
+                                        <span class="badge bg-warning text-dark">🟡 洽談 / 服務中</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">⚪ 已結案</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm fw-bold">💬 進入對話</a>
+
+                                        @if (item.Status == "InProgress")
+                                        {
+                                            <form asp-action="CancelApply" asp-route-id="@item.Id" method="post" onsubmit="return confirm('確定要取消接此案件嗎？取消後案件將重新開放給其他照服員。');">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm fw-bold">❌ 取消接案</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
